@@ -11,22 +11,88 @@
     </div>
     <header th:replace="/fragments/header :: header">
   </div>
+  <section class="book_section layout_padding">
+    <div class="container">
+      <div class="heading_container">
+        <h4 style="color: aliceblue;">
+          Profile
+        </h4>
+        <img th:src="${photo}" alt="Profile Picture" class="rounded-circle" style="width: 150px;">
 
-  <!-- about section -->
+        <div th:if="${error} != null" th:text="${error}" style="color: aliceblue;" class="error-message"></div>
+        <div th:if="${message} != null" th:text="${message}"  style="color: aliceblue;" class="success-message"></div>
 
-  <section class="about_section layout_padding">
-    <div class="container  ">
+        <form method="POST" action="/update_photo" enctype="multipart/form-data">
+          <div class="form-group">
+            <input type="file" name="file" />
+          </div>
+          <button type="submit" class="btn btn-primary">Update Photo</button>
+        </form>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form_container">
+            <form action="#" th:action="@{/profile}" th:object="${account}" method="post">
+              <div>
+                <input id="username" name="username" type="text" class="form-control" th:field="*{username}"
+                  placeholder="Your Username" />
+                <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="alert alert-danger">Username
+                  errors</p>
+              </div>
+              <div>
+                <input type="hidden" name="id" id="id" th:field="*{id}">
+                <input id="email" name="email" type="email" class="form-control" th:field="*{email}"
+                  placeholder="Email" />
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger">Email errors
+                </p>
+              </div>
+              <div>
+                <input id="password" name="password" type="password" class="form-control" th:field="*{password}"
+                  placeholder="Your Password" />
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger">Email
+                  errors</p>
+              </div>
+              <div>
+                <input id="age" name="age" type="number" class="form-control" th:field="*{age}"
+                  placeholder="Your age" />
+                <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="alert alert-danger">Age
+                  errors</p>
+              </div>
+              <div>
+                <input id="date_of_birth" name="date_of_birth" type="date" class="form-control"
+                  th:field="*{date_of_birth}" placeholder="Your date_of_birth" />
+                <p th:if="${#fields.hasErrors('date_of_birth')}" th:errors="*{date_of_birth}"
+                  class="alert alert-danger">date_of_birth errors</p>
+              </div>
+              <div>
+                <select name="gender" id="gender" th:field="*{gender}" class="form-control">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="alert alert-danger">Gender errors
+                </p>
 
-      <p>Profile.................</p>
-      
+              </div>
+
+              <div class="btn_box">
+                <button type="submit">
+                  Update Profile
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
-
-  <!-- end about section -->
+  <!-- end book section -->
 
   <footer th:replace="/fragments/footer :: footer">
 
-  
+
 
 </body>
 

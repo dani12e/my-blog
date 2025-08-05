@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,8 @@ import com.project1.starter.Models.Account;
 import com.project1.starter.Models.Post;
 import com.project1.starter.Services.AccountService;
 import com.project1.starter.Services.PostService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class PostController {
@@ -69,7 +72,10 @@ public class PostController {
 
     @PostMapping("/add_post")
     @PreAuthorize("isAuthenticated()")
-    public String addposthandle(@ModelAttribute Post post, Principal principal) {
+    public String addposthandle(@Valid @ModelAttribute Post post, BindingResult result, Principal principal) {
+        if (result.hasErrors()) {
+            return "post_views/add_post";
+        }
         String authuser = "email";
         if (principal != null) {
             authuser = principal.getName();
@@ -97,7 +103,10 @@ public class PostController {
 
     @PostMapping("/edit_post/view/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String updatePost(@PathVariable Long id, @ModelAttribute Post post){
+    public String updatePost(@Valid @ModelAttribute Post post, BindingResult result, @PathVariable Long id) {
+        if (result.hasErrors()) {
+            return "post_views/edit_post";
+        }
         Optional<Post> optionalpos = postService.getbyid(id);
         if (optionalpos.isPresent()) {
             Post existingpost = optionalpos.get();
@@ -110,16 +119,15 @@ public class PostController {
 
     @GetMapping("/delete_post/view/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String deletePost(@PathVariable Long id){
+    public String deletePost(@PathVariable Long id) {
         Optional<Post> optionalpostt = postService.getbyid(id);
         if (optionalpostt.isPresent()) {
             Post post = optionalpostt.get();
             postService.delete(post);
             return "redirect:/";
-        }else{
+        } else {
             return "404";
         }
     }
 
-    
 }

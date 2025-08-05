@@ -19,6 +19,7 @@ public class WebSecurityConfig {
         "/", 
         "/register", 
         "/login", 
+        "/forgot_password",
         "/db-console/**", 
         "/css/**", 
         "/images/**", 
@@ -49,6 +50,12 @@ public class WebSecurityConfig {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .permitAll()
+            )
+
+           .rememberMe(rememberMe -> rememberMe
+                .key("uniqueAndSecret") // Replace with a secure random string in production
+                .rememberMeParameter("remember-me") // This must match your checkbox name
+                .tokenValiditySeconds(1209600) // 14 days
             )
 
             .logout(logout -> logout

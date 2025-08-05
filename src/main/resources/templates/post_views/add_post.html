@@ -23,10 +23,18 @@
                         <form action="#" th:action="@{/add_post}" th:object="${post}" method="post">
                             <div>
                                 <input id="account" name="account" type="hidden" th:field="*{account}" />
-                                <input id="title" th:field="*{title}" name="title" type="text"  class="form-control" placeholder="Title" />
+                                <input id="title" th:field="*{title}" name="title" type="text" class="form-control"
+                                    placeholder="Title" />
+                                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+                                    class="alert alert-danger">title
+                                    errors</p>
                             </div>
                             <div>
-                                <input id="body" th:field="*{body}" name="body" type="textarea"  class="form-control" placeholder="Body" />
+                                <input id="body" th:field="*{body}" name="body" type="textarea" class="form-control"
+                                    placeholder="Body" />
+                                <p th:if="${#fields.hasErrors('body')}" th:errors="*{body}" class="alert alert-danger">
+                                    body
+                                    errors</p>
                             </div>
                             <div class="btn_box">
                                 <button type="submit">
