@@ -1,6 +1,7 @@
 package com.project1.starter.Models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import io.micrometer.common.lang.NonNull;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -60,6 +62,11 @@ public class Account {
     private String photo;
 
     private String role;
+
+    // @Column(name="token")
+    private String token;
+
+    private LocalDateTime password_reset_expiry;
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts;

@@ -20,6 +20,8 @@ public class WebSecurityConfig {
         "/register", 
         "/login", 
         "/forgot_password",
+        "/reset_password",
+        "/reset-password",
         "/db-console/**", 
         "/css/**", 
         "/images/**", 

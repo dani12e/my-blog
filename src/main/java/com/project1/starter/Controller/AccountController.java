@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,9 @@ import org.springframework.validation.BindingResult;
 import com.project1.starter.Models.Account;
 import com.project1.starter.Models.Post;
 import com.project1.starter.Services.AccountService;
+import com.project1.starter.Services.EmailService;
 import com.project1.starter.util.AppUtil;
+import com.project1.starter.util.email.EmailDetails;
 
 import jakarta.validation.Valid;
 
@@ -33,11 +36,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class AccountController {
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Value("${spring.web.resources.static-locations}")
     private String photo_prefix;
@@ -158,4 +165,76 @@ public class AccountController {
         return "auth_views/forgot_password";
     }
 
+    @PostMapping("/reset_password")
+    public String resetpassword(@ModelAttribute Account accountt, @RequestParam("email") String _email,
+            RedirectAttributes attributes, Model model) {
+
+        Optional<Account> optionalacct = accountService.findOneByEmail(_email);
+
+        if (optionalacct.isPresent()) {
+            Account account = optionalacct.get();
+            String reset_token = UUID.randomUUID().toString();
+            account.setToken(reset_token);
+            account.setPassword_reset_expiry(LocalDateTime.now().plusMinutes(10));
+
+            // Send email
+            String reset_message = "Click the link to reset your password: http://localhost:8080/reset_password?token="
+                    + reset_token;
+            EmailDetails emailDetails = new EmailDetails(account.getEmail(), reset_message, "Password Reset Request");
+
+            boolean sent = emailService.sendSimpleMail(emailDetails);
+            if (!sent) {
+                attributes.addFlashAttribute("error", "Failed to send email. Please try again later.");
+                return "redirect:/forgot_password";
+            }
+
+            accountService.save(account);
+            attributes.addFlashAttribute("message", "Password reset email sent successfully.");
+            return "redirect:/login";
+        } else {
+            attributes.addFlashAttribute("error", "User does not exist");
+            return "redirect:/forgot_password";
+        }
+
+    }
+
+    @GetMapping("/reset_password")
+    public String reset_password(@RequestParam("token") String token,
+            RedirectAttributes attributes,
+            Model model) {
+        Optional<Account> optional = accountService.findOneByToken(token);
+
+        if (token.isEmpty()) {
+            attributes.addFlashAttribute("error", "Invalid Token");
+            return "redirect:/forgot_password";
+        }
+
+        if (optional.isPresent()) {
+            Account account = optional.get();
+            if (LocalDateTime.now().isAfter(account.getPassword_reset_expiry())) {
+                attributes.addFlashAttribute("error", "Token expired");
+                return "redirect:/forgot_password";
+            }
+
+            // Pass a real Account object (or a DTO) to the view
+            model.addAttribute("account", account);
+            return "account_views/reset_password";
+        }
+
+        attributes.addFlashAttribute("error", "Invalid Token");
+        return "redirect:/forgot_password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetthepassword(@ModelAttribute Account account, RedirectAttributes attributes) {
+        Account accountOpt = accountService.findOneByid(account.getId()).get();
+
+        accountOpt.setPassword(account.getPassword());
+        accountOpt.setToken("");
+        accountService.save(accountOpt);
+
+        attributes.addFlashAttribute("message", "Password updated");
+        return "redirect:/login?success";
+
+    }
 }
