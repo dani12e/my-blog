@@ -1,6 +1,6 @@
 #FileLock
-#Fri Aug 08 14:54:09 WAT 2025
+#Wed Aug 13 00:37:52 WAT 2025
 hostName=DESKTOP-7LJB77B
-id=19889f5d46278fca279aff2542fafd4b7de9ef07462
+id=198a0a5b8d68ee2794a3747bf971899ac7beae6e34c
 method=file
-server=192.168.1.55\:63210
+server=172.20.10.2\:54209

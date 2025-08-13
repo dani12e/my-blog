@@ -87,7 +87,7 @@ public class SeedData implements CommandLineRunner {
         accountservice.save(account03);
         accountservice.save(account04);
 
-        List<Post> posts = postservice.getall();
+        List<Post> posts = postservice.findall();
         if (posts.size() == 0) {
             Post post01 = new Post();
             post01.setBody("Post 01................................");

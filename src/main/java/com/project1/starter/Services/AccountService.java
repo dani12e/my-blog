@@ -17,7 +17,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.project1.starter.Models.Account;
 import com.project1.starter.Models.Authority;
 import com.project1.starter.Repository.AccountRepository;
-import com.project1.starter.util.constants.Authorities;
 import com.project1.starter.util.constants.Roles;
 
 @Service

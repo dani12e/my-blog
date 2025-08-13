@@ -26,7 +26,8 @@ public class WebSecurityConfig {
         "/css/**", 
         "/images/**", 
         "/fonts/**", 
-        "/js/**"
+        "/js/**",
+        "/api/**"
     };
 
     @Bean

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="/fragments/head :: head">
+<head th:replace="/fragments/head :: head"></head>
 
 <body class="sub_page">
 
@@ -9,30 +9,61 @@
     <div class="bg-box">
       <img src="images/hero-bg.jpg" alt="">
     </div>
-    <header th:replace="/fragments/header :: header">
+    <header th:replace="/fragments/header :: header"></header>
   </div>
 
-  <!-- about section -->
+  <!-- Navbar with Filters -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Spring Blog</a>
+    <div class="collapse navbar-collapse">
+      <form class="form-inline my-2 my-lg-0" method="get" action="/">
+        <label class="mr-2">Sort By:</label>
+        <select class="form-control mr-2" name="sortBy" th:value="${sortBy}">
+          <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Created Date</option>
+          <option value="updatedAt" th:selected="${sortBy == 'updatedAt'}">Updated Date</option>
+        </select>
 
+        <label class="mr-2">Per Page:</label>
+        <select class="form-control mr-2" name="size" th:value="${size}">
+          <option value="5" th:selected="${size == 5}">5</option>
+          <option value="10" th:selected="${size == 10}">10</option>
+          <option value="15" th:selected="${size == 15}">15</option>
+        </select>
+
+        <button class="btn btn-primary" type="submit">Apply Filter</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Posts Section -->
   <section class="about_section layout_padding">
-    <div class="container  ">
-      <div class="posts" th:each=" post : ${posts}">
-        <h3><a th:href="@{'/post/view/' + ${post.id}}" th:text="${post.title}">title</a></h3>
-        <h6 th:text="'Author name: ' + ${post.account.username} + ' | Created At: ' + ${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}+ ' | Updated At: ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}"></h6>
+    <div class="container">
+      <div class="posts" th:each="post : ${postPage.content}">
+        <h3>
+          <a th:href="@{'/post/view/' + ${post.id}}" th:text="${post.title}">title</a>
+        </h3>
+        <h6 th:text="'Author: ' + ${post.account.username} + ' | Created At: ' +
+                     ${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')} + ' | Updated At: ' +
+                     ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}">
+        </h6>
         <p th:utext="${post.body}">body</p>
         <hr>
       </div>
 
+      <!-- Pagination Links -->
+      <div class="pagination mt-3">
+        <a th:href="@{'/'(page=${currentPage - 1}, size=${size}, sortBy=${sortBy})}"
+           th:if="${currentPage > 0}">Previous</a>
 
+        <span th:text="${currentPage + 1} + ' of ' + ${totalPages}"></span>
+
+        <a th:href="@{'/'(page=${currentPage + 1}, size=${size}, sortBy=${sortBy})}"
+           th:if="${currentPage + 1 < totalPages}">Next</a>
+      </div>
     </div>
   </section>
 
-  <!-- end about section -->
-
-  <footer th:replace="/fragments/footer :: footer">
-
-
+  <footer th:replace="/fragments/footer :: footer"></footer>
 
 </body>
-
 </html>
